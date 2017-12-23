@@ -1,16 +1,17 @@
 {
-  "name": "den-video-downloader",
+  "name": "den-downloader",
   "version": "1.0.0",
-  "description": "A command line tool to download USC DEN video lectures for later use.",
-  "main": "main.js",
+  "description": "Application to download USC DEN material for later use.",
+  "main": "src/main.js",
   "scripts": {
-    "start": "node main.js &"
+    "start": "node src/main.js"
   },
   "author": "Marton Demeter <marton1029@gmail.com>",
   "license": "GPL-3.0",
   "dependencies": {
     "array-unique": "^0.3.2",
     "cheerio": "^1.0.0-rc.2",
+    "inquirer": "^4.0.1",
     "moment": "^2.19.3",
     "pad-md": "0.0.5",
     "prompt": "^1.0.0",

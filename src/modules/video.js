@@ -1,10 +1,11 @@
-downloadVideo = (init_url) => {
+const fs = require('fs');
+const pad = require('pad-md');
+const request = require('request');
+const rp = require('request-promise');
+
+downloadVideo = (init_url,path) => {
   if(!init_url) return;
   return new Promise((resolve, reject) => {
-    const fs = require('fs');
-    const pad = require('pad-md');
-    const request = require('request');
-    const rp = require('request-promise');
     try {
       var init_url_prefix = init_url.split('/playlist')[0];
       var file_name_parts = init_url.split('/')[6].split('_');
@@ -20,7 +21,7 @@ downloadVideo = (init_url) => {
       var queued_processes = 0;
       var retry_counter = 0;
       var video_segment_prefix = `${m3u8_contents[5].split('_ps0_')[0]}_ps0_`
-      var writeStream = fs.createWriteStream(`${file_name}.ts`,{autoClose:false});
+      var writeStream = fs.createWriteStream(path,{autoClose:false});
       (_d = () => {
         var options = {
           uri: `${init_url_prefix}/${video_segment_prefix}${pad.left(queued_processes++,3,'0')}.ts`,
