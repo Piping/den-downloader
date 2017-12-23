@@ -151,7 +151,6 @@ function _idleSpinner(message) {
 
 _getVideoLink = (jar_c,jar_t,$) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => { reject(new Error('TimeoutError')) }, 120000);
     var vd = $('iframe').attr('src');
     if(vd) {
       vd = `https://courses.uscden.net${vd}`;
