@@ -30,6 +30,6 @@ auth.promptCredentials().then(async (cred) => {
   return await proc.promptContentTypeSelection(content);
 }).then(async (content) => {
   return await proc.promptContentSelection(content);
-}).then(async (content) => {
-  return await proc.downloadContent(jar_c,jar_t,content);
+}).then((content) => {
+  return proc.downloadContent(jar_c,jar_t,content);
 }).catch((error) => { console.log(error.message); process.exit(1) });
