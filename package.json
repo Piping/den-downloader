@@ -1,6 +1,6 @@
 {
   "name": "den-downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application to download USC DEN material for later use.",
   "main": "src/main.js",
   "scripts": {
