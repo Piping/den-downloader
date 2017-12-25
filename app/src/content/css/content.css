@@ -1,0 +1,124 @@
+html, body {
+  height: 100% !important; }
+
+.bg-primary {
+  background-color: #00d1b2 !important; }
+
+.bg-info {
+  background-color: #209cee !important; }
+
+.h-100 {
+  height: 100% !important; }
+
+.w-100 {
+  width: 100% !important; }
+
+.w-90 {
+  width: 90% !important; }
+
+.w-80 {
+  width: 80% !important; }
+
+.w-75 {
+  width: 75% !important; }
+
+.w-70 {
+  width: 70% !important; }
+
+.w-60 {
+  width: 60% !important; }
+
+.w-50 {
+  width: 50% !important; }
+
+.w-40 {
+  width: 40% !important; }
+
+.w-30 {
+  width: 30% !important; }
+
+.w-25 {
+  width: 25% !important; }
+
+.w-20 {
+  width: 20% !important; }
+
+.w-10 {
+  width: 10% !important; }
+
+.level-1 {
+  margin-left: 1rem !important; }
+
+.level-2 {
+  margin-left: 2rem !important; }
+
+.d-flex {
+  display: flex;
+  flex-direction: column !important; }
+
+.justify-content-center {
+  justify-content: center !important; }
+
+.justify-content-start {
+  justify-content: start !important; }
+
+.align-items-center {
+  align-items: center !important; }
+
+.align-items-start {
+  align-items: start !important; }
+
+.text-center {
+  text-align: center !important; }
+
+.progressbarcustom {
+  margin: auto !important;
+  background-color: #adfff3 !important; }
+
+.indeterminate {
+  background-color: #00d1b2 !important; }
+
+.spinner-layer {
+  border-color: #00d1b2 !important; }
+
+.message {
+  max-width: 250px !important;
+  font-size: 0.8rem !important; }
+
+.panel {
+  margin: 0.5rem !important; }
+
+.panel-heading {
+  font-size: 0.9rem !important;
+  overflow: hidden !important; }
+
+.panel-heading span {
+  vertical-align: middle !important; }
+
+.panel-block {
+  font-size: 0.7rem !important; }
+
+.panel-block i {
+  margin-left: auto !important; }
+
+.panel-block label {
+  margin-right: 0.3rem !important; }
+
+.panel-block label i {
+  margin-right: 0.4rem !important; }
+
+.sub-section {
+  border-top: none !important; }
+
+.material-container {
+  display: none; }
+
+.tag {
+  font-size: 0.6rem !important;
+  cursor: pointer !important; }
+
+.tags {
+  display: inline !important;
+  float: right !important; }
+
+/*# sourceMappingURL=content.css.map */

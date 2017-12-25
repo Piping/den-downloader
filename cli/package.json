@@ -1,7 +1,7 @@
 {
   "name": "den-downloader",
   "version": "1.0.1",
-  "description": "Application to download USC DEN material for later use.",
+  "description": "CLI application to download USC DEN course material for later use.",
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js"
