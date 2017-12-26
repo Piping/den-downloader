@@ -105,7 +105,9 @@ categorizeCourseContent = (jar_c,jar_t,c) => {
         }).catch((error) => {});
       }));
     });
-    Promise.all(promises).then(() => { 
+    Promise.all(promises).then(() => {
+      content.document.sort((a,b) => { return a.title.localeCompare(b.title) });
+      content.video.sort((a,b) => { return a.title.localeCompare(b.title) });
       resolve(content);
     }).catch((error) => { reject(error) });
   });
