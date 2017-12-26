@@ -206,7 +206,7 @@ window.onload = () => {
     $(checkbox_container).append(title);
     var icon = document.createElement('i');
     if(container) $(icon).addClass('fa fa-plus-circle');
-    else $(icon).addClass('fa fa-arrow-circle-down is-primary is-invisible');
+    else $(icon).addClass('fa fa-download is-primary is-invisible');
     $(icon).css('float','right');
     $(icon).css('position','relative');
     $(icon).css('top','3px');
