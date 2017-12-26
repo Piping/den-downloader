@@ -64,7 +64,7 @@ ipcMain.on('content-request', (event,arg) => {
   // content request retry
 });
 
-ipcMain.on('download-request', async (event, arg) => {
+ipcMain.on('download-request', (event, arg) => {
   proc.downloadContent(jar_c,jar_t,arg);
 });
 
