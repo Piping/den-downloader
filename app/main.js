@@ -3,65 +3,59 @@ const {app, BrowserWindow, ipcMain} = electron;
 const path = require('path');
 const url = require('url');
 
+const child_process = require('child_process');
 const rp = require('request-promise');
-const auth = require('./src/modules/auth');
+const removeValue = require('remove-value');
 const info = require('./src/modules/info');
 const proc = require('./src/modules/process');
 
-var jar_c = rp.jar();
-var jar_t = rp.jar();
-var content_event_sender = null;
-var courses_home_data = null;
-
 let win;
 
-ipcMain.on('content-initial-loaded', (event) => {
-  content_event_sender = event.sender;
-})
+var jar_c = rp.jar();
+var jar_t = rp.jar();
 
-ipcMain.on('login-submit', async (event, arg) => {
-  return await auth.authenticateCoursesDen(jar_c,arg)
-  .then(async () => {
-    return await info.requestCoursesHome(jar_c);
-  }).then((data) => {
-    courses_home_data = data;
-    if(content_event_sender) {
-      content_event_sender.send('login-result', {msg:'Authenticated!',type:'success'});
-    } else {
-      ipcMain.on('content-initial-loaded', (event) => {
-        event.sender.send('login-result', {msg:'Authenticated!',type:'success'});
-      });
-    }
-  }).catch((error) => {
-    if(content_event_sender) {
-      content_event_sender.send('login-result', {msg:error.message,type:'failure'});
-    } else {
-      ipcMain.on('content-initial-loaded', (event) => {
-        event.sender.send('login-result', {msg:error.message,type:'failure'});
-      });
+ipcMain.on('login-submit', (event, arg) => {
+  const s_cred = JSON.stringify(arg);
+  const command = 'node';
+  const parameters =  ['src/external/main.js',s_cred];
+  const child = child_process.spawn(command,parameters,{
+    stdio: ['pipe','pipe','pipe','ipc']
+  });
+  child.on('message', (message) => {
+    message = JSON.parse(message);
+    jar_c = message.jars.jar_c;
+    jar_t = message.jars.jar_t;
+    switch(message.event) {
+      case 'courses-list':
+        courseInformationArchive = message.payload.courses;
+        event.sender.send('courses-list', message.payload.courses);
+        break;
+      case 'content-list':
+        event.sender.send('content-list', message.payload);
+        break;
+      case 'error':
+        switch(message.error.name) {
+          case 'StatusCodeError':
+            if(message.error.statusCode == 403)
+              event.sender.send('login-failure');
+            break;
+          case 'ContentUnavailableError':
+            event.sender.send('content-list', message.payload);
+            break;
+          default:
+            console.log(message.error);
+        }
+        break;
+      default:
+        console.log(JSON.stringify(message));
     }
   });
 });
 
-ipcMain.on('proceed-courses', async (event) => {
-  return await proc.getCourseListLink(courses_home_data)
-  .then(async (link) => {
-    return await info.requestCourseList(jar_c,link);
-  }).then(async (data) => {
-    return await proc.getCourses(data);
-  }).then(async (courses) => {
-    event.sender.send('courses-list', courses);
-    courses.forEach(async (course,index) => {
-      return await info.requestCoursePage(jar_c,course.url)
-      .then(async (data) => {
-        return await proc.parseCourseContent(data);
-      }).then(async (content) => {
-        return await proc.categorizeCourseContent(jar_c,jar_t,content);
-      }).then((content) => {
-        event.sender.send('content-list',{content:content,index:index});
-      });
-    });
-  });
+var courseInformationArchive = Array();
+var contentRequestQueue = Array();
+ipcMain.on('content-request', (event,arg) => {
+  // content request retry
 });
 
 ipcMain.on('download-request', async (event, arg) => {
