@@ -70,6 +70,7 @@ categorizeCourseContent = (jar_c,jar_t,c) => {
     var content = Object();
     content.document = Array();
     content.video = Array();
+    content.error = null;
     var promises = Array();
     c.forEach((item) => {
       promises.push(new Promise((resolve, reject) => {
@@ -83,6 +84,10 @@ categorizeCourseContent = (jar_c,jar_t,c) => {
           if(dl) {
             item.category = 'document';
             item.download_link = dl;
+            item.extension = 'pdf';
+            var re = new RegExp('([.]pdf|[.]txt|[.]html|[.]doc|[.]docx|[.]ppt|[.]pptx|[.]png|[.]jpg|[.]jpeg)');
+            var found = dl.match(re);
+            if(found) item.extension = found[0].slice(1);
             content.document.push(item);
             resolve(item);
           } else {
@@ -104,47 +109,6 @@ categorizeCourseContent = (jar_c,jar_t,c) => {
       resolve(content);
     }).catch((error) => { reject(error) });
   });
-}
-
-promptCourseSelection = (courses) => {
-  return new Promise((resolve, reject) => {
-    var choices = Array();
-    var lookup = Object();
-    courses.forEach((course) => {
-      var selector = `${course.id} - ${course.title} - ${course.term}`;
-      choices.push(selector);
-      lookup[selector] = course;
-    });
-    var question = [{
-      type:'list',
-      name:'course',
-      message:'Select a course.',
-      prefix: '',
-      suffix: '',
-      choices: choices
-    }];
-    inquirer.prompt(question).then((result) => {
-      globalIdleSpinner = new _idleSpinner('Parsing course material');
-      globalIdleSpinner.start();
-      resolve(lookup[result.course]);
-    }).catch((error) => { reject(error) });
-  });
-}
-
-function _idleSpinner(message) {
-  this.states = ['.  ','.. ','...','   '];
-  this.s = 0;
-  this.speed = 300;
-  this.t;
-  this.start = () => {
-    this.t = setInterval(() => {
-      process.stdout.write(`\r ${message}${this.states[(this.s++)%this.states.length]}`);
-    }, this.speed);
-  }
-  this.stop = () => {
-    console.log();
-    clearInterval(this.t);
-  }
 }
 
 _getVideoLink = (jar_c,jar_t,$) => {
@@ -169,75 +133,13 @@ _getVideoLink = (jar_c,jar_t,$) => {
   });
 }
 
-promptContentSelection = (obj) => {
-  return new Promise((resolve, reject) => {
-    var choices = Array();
-    var lookup = Object();
-    switch(obj.type) {
-      case 'document':
-        obj.content.document.forEach((item) => {
-          var selector = item.title;
-          choices.push(selector);
-          lookup[selector] = item;
-        }); break;
-      case 'video':
-        obj.content.video.forEach((item) => {
-          var selector = item.title;
-          choices.push(selector);
-          lookup[selector] = item;
-        }); break;
-      default: 
-        var final = Array();
-        obj.content.document.forEach((item) => final.push(item));
-        obj.content.video.forEach((item) => final.push(item));
-        return resolve(final);
-    }
-    var question = [{
-      type: 'checkbox',
-      name: 'content',
-      message: 'Select what to download.',
-      prefix: '',
-      suffix: '',
-      choices: choices
-    }];
-    inquirer.prompt(question).then((result) => {
-      var final = Array();
-      result.content.forEach((item) => {
-        final.push(lookup[item]);
-      });
-      resolve(final);
-    }).catch((error) => { reject(error) });
-  });
-}
-
-promptContentTypeSelection = (content) => {
-  return new Promise((resolve, reject) => {
-    globalIdleSpinner.stop();
-    var question = [{
-      type: 'list',
-      name: 'content',
-      message: 'Select what to download.',
-      prefix: '',
-      suffix: '',
-      choices: ['Documents', 'Video Lectures', 'Everything']
-    }];
-    inquirer.prompt(question).then((result) => {
-      switch(result.content) {
-        case 'Documents': resolve({content:content,type:'document'}); break;
-        case 'Video Lectures': resolve({content:content,type:'video'}); break;
-        case 'Everything': resolve({content:content,type:'everything'}); break;
-      }
-    }).catch((error) => { reject(error) });
-  });
-}
-
 downloadContent = (jar_c,jar_t,arr) => {
   var outdir = util.generateOutputDirectory('content');
   arr.forEach((item) => {
     if(item.type === 'doc')
-      doc.downloadDocument(jar_c,item.link,`${outdir}/documents/${item.title}.pdf`);
-    if(item.type === 'doc') {
-      video.downloadVideo(item.link,`${outdir}/videos/${item.title.replace(/[\s/]/g,'')}.ts`);
+      doc.downloadDocument(jar_c,item.link,`${outdir}/documents/${item.title}.${item.ext}`);
+    if(item.type === 'vid') {
+      video.downloadVideo(item.link,`${outdir}/videos/${item.title.replace(/[\s/]/g,'')}.${item.ext}`);
     }
   });
 }
@@ -247,8 +149,5 @@ module.exports = {
   getCourses,
   parseCourseContent,
   categorizeCourseContent,
-  promptCourseSelection,
-  promptContentTypeSelection,
-  promptContentSelection,
   downloadContent
 }
