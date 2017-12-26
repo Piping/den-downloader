@@ -244,7 +244,6 @@ window.onload = () => {
   }
   
   setItemDownloading = (item) => {
-    $(item).removeClass('bg-primary has-text-white');
     $(item).addClass('bg-primary has-text-white');
     $(item).removeClass('download').addClass('downloading');
     $(item).removeClass('downloadable-item');
@@ -255,10 +254,8 @@ window.onload = () => {
   
   clearItemDownloading = (item) => {
     $(item).removeClass('bg-primary has-text-white');
-    $(item).removeClass('downloadable-item');
     $(item).addClass('downloadable-item');
     $(item).find('i').first().removeClass('is-invisible');
-    $(item).find('i').last().removeClass('is-invisible');
     $(item).find('i').last().addClass('is-invisible');
     $(item).click(() => subsectionNotContainerOnClick($(item)));
   }
