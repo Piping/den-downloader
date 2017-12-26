@@ -33,8 +33,10 @@ window.onload = () => {
     $('#container').html('');
     $('#container').append(result);
   });
-    
+  var globalCourseArchive = Array();
+  var globalOutputDirectory = require('path').join(__dirname,'..','..','content');
   ipcRenderer.on('courses-list', (event, arg) => {
+    globalCourseArchive = arg;
     $('#container').removeClass('justify-content-center');
     $('#container').addClass('justify-content-start');
     $('#container').html('');
@@ -44,6 +46,20 @@ window.onload = () => {
     $(panel_header).addClass('panel-heading');
     var title = document.createElement('span');
     $(title).text('Courses');
+    var folder_container = document.createElement('span')
+    $(folder_container).addClass('tags has-addons is-marginless folder');
+    var folder = document.createElement('span');
+    $(folder).addClass('tag is-dark is-marginless');
+    $(folder).text('Output Directory');
+    $(folder_container).append(folder);
+    $(folder_container).click(function() {
+      const dialog = require('electron').remote.dialog;
+      dialog.showOpenDialog({
+        properties: ['openDirectory','createDirectory']
+      }, (paths) => {
+        globalOutputDirectory = paths.toString();
+      });
+    });
     var tags = document.createElement('span');
     $(tags).addClass('tags has-addons is-marginless');
     var download = document.createElement('span');
@@ -61,6 +77,7 @@ window.onload = () => {
           type:$(el).attr('type'),
           link:$(el).attr('download-link'),
           ext:$(el).attr('extension'),
+          course:$(el).attr('course'),
           title:$(el).text()
         });
       });
@@ -80,10 +97,13 @@ window.onload = () => {
           $('#download-item-number').text('0');
         });
         globalDownloadContainer = download_list;
-        ipcRenderer.send('download-request',download_list);
+        var obj = Object();
+        obj.target = globalOutputDirectory;
+        obj.list = download_list;
+        ipcRenderer.send('download-request',obj);
       }
     });
-    $(panel_header).append(title).append(tags);
+    $(panel_header).append(title).append(tags).append(folder_container);
     $(panel).append(panel_header);
     arg.forEach((course,index) => {
       var course_container = document.createElement('div');
@@ -169,6 +189,7 @@ window.onload = () => {
       $(subsection).attr('type',item.type);
       $(subsection).attr('download-link',item.link);
       $(subsection).attr('extension',item.ext);
+      $(subsection).attr('course',item.course);
       $(subsection).click(function() {
         var icon = $(this).find('i').first();
         if($(icon).hasClass('fa-square-o'))
@@ -253,7 +274,8 @@ window.onload = () => {
         var i = {
           type:'doc',
           link:item.download_link,
-          ext:item.extension
+          ext:item.extension,
+          course:globalCourseArchive[arg.index].id
         };
         createSubsection($(`#${id}`),item.title,2,null,null,i);
       });
@@ -265,7 +287,8 @@ window.onload = () => {
         var i = {
           type:'vid',
           link:item.download_link,
-          ext:'ts'
+          ext:'ts',
+          course:globalCourseArchive[arg.index].id
         };
         createSubsection($(`#${id}`),item.title,2,null,null,i);
       });

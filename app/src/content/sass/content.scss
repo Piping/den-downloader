@@ -57,7 +57,7 @@ html,body{height:100%!important}
 .spinner-layer{border-color:$color-primary!important}
 .message{max-width:250px!important;font-size:0.8rem!important}
 .message-header{button{margin-right:0.5rem!important}}
-.panel{margin:0.5rem!important}
+.panel{margin:0.5rem!important;min-width:300px!important}
 .panel-heading{font-size:0.9rem!important;overflow:hidden!important}
 .panel-heading{span{vertical-align:middle!important}}
 .panel-block{font-size:0.7rem!important}
@@ -67,4 +67,5 @@ html,body{height:100%!important}
 .sub-section{border-top:none!important}
 .material-container{display:none}
 .tag{font-size:0.6rem!important;cursor:pointer!important}
-.tags{display:inline!important;float:right!important}
+.folder{float:right!important;margin-right:0.5rem!important}
+.tags{display:inline;float:right;position:relative;top:-1px}
