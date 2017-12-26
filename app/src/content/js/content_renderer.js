@@ -52,14 +52,7 @@ window.onload = () => {
     $(folder).addClass('tag is-dark is-marginless');
     $(folder).text('Output Directory');
     $(folder_container).append(folder);
-    $(folder_container).click(function() {
-      const dialog = require('electron').remote.dialog;
-      dialog.showOpenDialog({
-        properties: ['openDirectory','createDirectory']
-      }, (paths) => {
-        globalOutputDirectory = paths.toString();
-      });
-    });
+    $(folder_container).click(outputDirectoryOnClick);
     var tags = document.createElement('span');
     $(tags).addClass('tags has-addons is-marginless');
     var download = document.createElement('span');
@@ -89,11 +82,7 @@ window.onload = () => {
       hashNew = hashNew.digest('hex');
       if(hashNew != hashExisting) {
         $('.download').each((i,el) => {
-          $(el).removeClass('download').addClass('downloading');
-          $(el).removeClass('downloadable-item');
-          $(el).find('i').first().addClass('is-invisible');
-          $(el).find('i').last().removeClass('is-invisible');
-          $(el).unbind('click');
+          setItemDownloading($(el));
           $('#download-item-number').text('0');
         });
         globalDownloadContainer = download_list;
@@ -118,10 +107,8 @@ window.onload = () => {
           var container = $(this).parent().parent().next();
           $(container).find('.sub-section').each((i,el) => {
             var icon = $(el).find('i').first();
-            if(icon.hasClass('fa-square-o')) {
+            if(icon.hasClass('fa-square-o'))
               $(icon).removeClass('fa-square-o').addClass('fa-check-square');
-              
-            }
           });
         }
         else {
@@ -154,19 +141,7 @@ window.onload = () => {
       $(bar).addClass('indeterminate');
       $(progress).append(bar);
       $(material_container).append(progress);
-      $(course_container).click(function() {
-        var container = $(this).next();
-        if($(container).css('display') == 'none') {
-          $(container).css('display','block');
-          $(container).find('.material-container').prev().css('display','block');
-          $(this).find('i').last().removeClass('fa-plus-circle').addClass('fa-minus-circle');
-        } else {
-          $(container).css('display','none');
-          $(container).find('.material-container').prev().css('display','none');
-          $(this).find('i').last().removeClass('fa-minus-circle').addClass('fa-plus-circle');
-        }
-        updateDownloadCounter();
-      })
+      $(course_container).click(() => courseContainerOnClick($(course_container)));
       $(panel).append(course_container);
       $(panel).append(material_container);
     });
@@ -191,12 +166,6 @@ window.onload = () => {
       $(subsection).attr('extension',item.ext);
       $(subsection).attr('course',item.course);
       $(subsection).click(function() {
-        var icon = $(this).find('i').first();
-        if($(icon).hasClass('fa-square-o'))
-          $(icon).removeClass('fa-square-o').addClass('fa-check-square');
-        else
-          $(icon).removeClass('fa-check-square').addClass('fa-square-o');
-        updateDownloadCounter();
       });
     } else {
       $(checkbox).click(function(event) {
@@ -223,8 +192,8 @@ window.onload = () => {
       });
     }
     $(checkbox_container).append(checkbox);
-    title = document.createTextNode(title)
-    $(checkbox_container).append(title);
+    var name = document.createTextNode(title)
+    $(checkbox_container).append(name);
     var icon = document.createElement('i');
     if(container) $(icon).addClass('fa fa-plus-circle');
     else $(icon).addClass('fa fa-download is-primary is-invisible');
@@ -249,7 +218,7 @@ window.onload = () => {
           $(this).find('i').last().removeClass('fa-minus-circle').addClass('fa-plus-circle');
         }
       });
-    }
+    } else checkFileExists(title,item.type,item.course,item.ext,$(subsection));
     $(parent).append(subsection);
     if(container) $(parent).append(subsection_container);
   }
@@ -261,6 +230,76 @@ window.onload = () => {
     var number = elements.length;
     number = number || 0;
     $('#download-item-number').text(number);
+  }
+  
+  checkFileExists = (title,type,course,extension,element) => {
+    var type = type == 'doc' ? 'documents' : 'videos';
+    if(type=='videos') title = title.replace(/[\s/]/g,'');
+    var d = require('path').join(globalOutputDirectory,course,type);
+    var f = require('path').join(d,`${title}.${extension}`);
+    require('fs').access(f,(error) => {
+      if(error) { clearItemDownloading($(element)); return; }
+      setItemDownloading($(element));
+    });
+  }
+  
+  setItemDownloading = (item) => {
+    $(item).removeClass('bg-primary has-text-white');
+    $(item).addClass('bg-primary has-text-white');
+    $(item).removeClass('download').addClass('downloading');
+    $(item).removeClass('downloadable-item');
+    $(item).find('i').first().addClass('is-invisible');
+    $(item).find('i').last().removeClass('is-invisible');
+    $(item).unbind('click');
+  }
+  
+  clearItemDownloading = (item) => {
+    $(item).removeClass('bg-primary has-text-white');
+    $(item).removeClass('downloadable-item');
+    $(item).addClass('downloadable-item');
+    $(item).find('i').first().removeClass('is-invisible');
+    $(item).find('i').last().removeClass('is-invisible');
+    $(item).find('i').last().addClass('is-invisible');
+    $(item).click(() => subsectionNotContainerOnClick($(item)));
+  }
+  
+  courseContainerOnClick = (sibling) => {
+    var container = $(sibling).next();
+    if($(container).css('display') == 'none') {
+      $(container).css('display','block');
+      $(container).find('.material-container').prev().css('display','block');
+      $(sibling).find('i').last().removeClass('fa-plus-circle').addClass('fa-minus-circle');
+    } else {
+      $(container).css('display','none');
+      $(container).find('.material-container').prev().css('display','none');
+      $(sibling).find('i').last().removeClass('fa-minus-circle').addClass('fa-plus-circle');
+    }
+    updateDownloadCounter();
+  }
+  
+  subsectionNotContainerOnClick = (subsection) => {
+    var icon = $(subsection).find('i').first();
+    if($(icon).hasClass('fa-square-o'))
+      $(icon).removeClass('fa-square-o').addClass('fa-check-square');
+    else
+      $(icon).removeClass('fa-check-square').addClass('fa-square-o');
+    updateDownloadCounter();
+  }
+  
+  outputDirectoryOnClick = () => {
+    const dialog = require('electron').remote.dialog;
+    dialog.showOpenDialog({
+      properties: ['openDirectory','createDirectory']
+    }, (paths) => {
+      globalOutputDirectory = paths.toString();
+      $('.downloading, .downloadable-item').each((i,el) => {
+        var title = $(el).text();
+        var course = $(el).attr('course');
+        var type = $(el).attr('type');
+        var ext = $(el).attr('extension');
+        checkFileExists(title,type,course,ext,$(el));
+      })
+    });
   }
   
   ipcRenderer.on('content-list', (event, arg) => {
