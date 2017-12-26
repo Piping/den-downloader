@@ -1,7 +1,6 @@
 const auth = require('../modules/auth');
 const info = require('../modules/info');
 const proc = require('../modules/process');
-const child_process = require('child_process')
 const rp = require('request-promise');
 
 var jar_c = rp.jar()
