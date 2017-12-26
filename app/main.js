@@ -1,12 +1,11 @@
 const electron = require('electron');
-const {app, BrowserWindow, ipcMain} = electron;
+const {app, BrowserWindow, ipcMain, dialog} = electron;
 const path = require('path');
 const url = require('url');
 
 const child_process = require('child_process');
 const rp = require('request-promise');
 const removeValue = require('remove-value');
-const info = require('./src/modules/info');
 const proc = require('./src/modules/process');
 
 let win;
@@ -17,9 +16,16 @@ var jar_t = rp.jar();
 ipcMain.on('login-submit', (event, arg) => {
   const s_cred = JSON.stringify(arg);
   const command = 'node';
-  const parameters =  ['src/external/main.js',s_cred];
+  var file = path.join(__dirname,'src','external','main.js');
+  const parameters =  [file,s_cred];
+  const environment = process.env;
+  environment.PATH += ':/usr/local/bin/:/sbin:/usr/sbin';
   const child = child_process.spawn(command,parameters,{
-    stdio: ['pipe','pipe','pipe','ipc']
+    shell: false,
+    env: environment,
+    stdio: ['ignore','ignore','ignore','ipc']
+  }).on('error', (error) => {
+    dialog.showErrorBox('Spawn Error',JSON.stringify(error));
   });
   child.on('message', (message) => {
     message = JSON.parse(message);
@@ -43,11 +49,11 @@ ipcMain.on('login-submit', (event, arg) => {
             event.sender.send('content-list', message.payload);
             break;
           default:
-            console.log(message.error);
+            dialog.showMessageBox({message:JSON.stringify(message)});
         }
         break;
       default:
-        console.log(JSON.stringify(message));
+        dialog.showMessageBox({message:JSON.stringify(message)});
     }
   });
 });
