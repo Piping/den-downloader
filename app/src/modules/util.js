@@ -1,14 +1,31 @@
 const fs = require('fs');
-const moment = require('moment');
+const path = require('path');
 
-generateOutputDirectory = (path) => {
+generateOutputDirectory = (dir,type,course) => {
+  if(!type) {
+    try {
+      fs.mkdirSync(dir);
+    } catch(error) { return }
+    return;
+  }
+  var p = path.join(dir,course);
   try {
-    path = path || `content_${moment().unix()}`;
-    fs.mkdirSync(path);
-    fs.mkdirSync(`${path}/documents`);
-    fs.mkdirSync(`${path}/videos`);
+    fs.mkdirSync(p);
   } catch(error) {}
-  return path;
+  var p = path.join(dir,course,'documents');
+  if(type=='doc') {
+    try {
+      fs.mkdirSync(p);
+      return p;
+    } catch(error) { return p }
+  }
+  var p = path.join(dir,course,'videos');
+  if(type=='vid') {
+    try {
+      fs.mkdirSync(p);
+      return p;
+    } catch(error) { return p }
+  }
 }
 
 module.exports = {

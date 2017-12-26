@@ -135,13 +135,15 @@ _getVideoLink = (jar_c,jar_t,$) => {
   });
 }
 
-downloadContent = (jar_c,jar_t,arr) => {
-  var outdir = util.generateOutputDirectory('content');
-  arr.forEach((item) => {
-    if(item.type === 'doc')
-      doc.downloadDocument(jar_c,item.link,`${outdir}/documents/${item.title}.${item.ext}`);
-    if(item.type === 'vid') {
-      video.downloadVideo(item.link,`${outdir}/videos/${item.title.replace(/[\s/]/g,'')}.${item.ext}`);
+downloadContent = (jar_c,jar_t,obj) => {
+  util.generateOutputDirectory(obj.target);
+  obj.list.forEach((item) => {
+    if(item.type === 'doc') {
+      var out = util.generateOutputDirectory(obj.target,'doc',item.course);
+      doc.downloadDocument(jar_c,item.link,`${out}/${item.title}.${item.ext}`);
+    } if(item.type === 'vid') {
+      var out = util.generateOutputDirectory(obj.target,'vid',item.course);
+      video.downloadVideo(item.link,`${out}/${item.title.replace(/[\s/]/g,'')}.${item.ext}`);
     }
   });
 }
