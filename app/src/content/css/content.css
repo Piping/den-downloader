@@ -4,8 +4,47 @@ html, body {
 .bg-primary {
   background-color: #00d1b2 !important; }
 
+.bg-primary-l {
+  background-color: #f5fffd !important; }
+
+.fg-primary-l {
+  color: #021310 !important; }
+
 .bg-info {
   background-color: #209cee !important; }
+
+.bg-info-l {
+  background-color: #f6fbfe !important; }
+
+.fg-info-l {
+  color: #12537e !important; }
+
+.bg-success {
+  background-color: #23d160 !important; }
+
+.bg-success-l {
+  background-color: #f6fef9 !important; }
+
+.fg-success-l {
+  color: #0e301a !important; }
+
+.bg-dark {
+  background-color: #363636 !important; }
+
+.bg-dark-l {
+  background-color: #fafafa !important; }
+
+.fg-dark-l {
+  color: #2a2a2a !important; }
+
+.bg-danger {
+  background-color: #ff3860 !important; }
+
+.bg-danger-l {
+  background-color: #fff5f7 !important; }
+
+.fg-danger-l {
+  color: #cd0930 !important; }
 
 .h-100 {
   height: 100% !important; }
@@ -75,6 +114,10 @@ html, body {
   margin: auto !important;
   background-color: #adfff3 !important; }
 
+.progressbarcustom {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important; }
+
 .indeterminate {
   background-color: #00d1b2 !important; }
 
@@ -84,6 +127,9 @@ html, body {
 .message {
   max-width: 250px !important;
   font-size: 0.8rem !important; }
+
+.message-header button {
+  margin-right: 0.5rem !important; }
 
 .panel {
   margin: 0.5rem !important; }

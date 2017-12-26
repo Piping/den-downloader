@@ -4,28 +4,19 @@ const crypto = require('crypto');
 var globalDownloadContainer = Array();
 
 window.onload = () => {
-  ipcRenderer.on('login-result', (event, arg) => {
-    if(arg.type == 'success') {
-      ipcRenderer.send('proceed-courses');
-      var header = 'Authenticated!';
-      var content = 'Successfully authenticated!\n';
-      content += 'Proceeding to parse courses...';
-      var color = 'is-primary';
-    } else {
-      ipcRenderer.send('halt');
-      var header = 'Failed to Authenticate!';
-      var content = 'Could not authenticate.\n';
-      content += 'Please double check your credentials ';
-      content += 'and try logging in again!';
-      var color = 'is-danger';
-      var button = document.createElement('button');
-      $(button).addClass('button is-danger');
-      $(button).on('click', () => window.location.href='../login/login.html');
-      var icon = document.createElement('i');
-      $(icon).addClass('fa fa-chevron-left');
-      $(button).append(icon);
-      $(button).append(message);
-    }
+  ipcRenderer.on('login-failure', (event, arg) => {
+    var header = 'Failed to Authenticate!';
+    var content = 'Could not authenticate.\n';
+    content += 'Please double check your credentials ';
+    content += 'and try logging in again!';
+    var color = 'is-danger';
+    var button = document.createElement('button');
+    $(button).addClass('button is-danger');
+    $(button).on('click', () => window.location.href='../login/login.html');
+    var icon = document.createElement('i');
+    $(icon).addClass('fa fa-chevron-left');
+    $(button).append(icon);
+    $(button).append(message);
     var result = document.createElement('article');
     $(result).addClass(`message ${color}`);
     var result_header = document.createElement('div');
@@ -39,13 +30,9 @@ window.onload = () => {
     $(result_content).text(content);
     $(result).append(result_header);
     $(result).append(result_content);
-    if(arg.type != 'success') {
-      $('#container').html('');
-      $('#container').append(result);
-    }
+    $('#container').html('');
+    $('#container').append(result);
   });
-  
-  ipcRenderer.send('content-initial-loaded');
     
   ipcRenderer.on('courses-list', (event, arg) => {
     $('#container').removeClass('justify-content-center');
@@ -73,6 +60,7 @@ window.onload = () => {
         download_list.push({
           type:$(el).attr('type'),
           link:$(el).attr('download-link'),
+          ext:$(el).attr('extension'),
           title:$(el).text()
         });
       });
@@ -83,6 +71,14 @@ window.onload = () => {
       hashNew = hashNew.update(JSON.stringify(download_list));
       hashNew = hashNew.digest('hex');
       if(hashNew != hashExisting) {
+        $('.download').each((i,el) => {
+          $(el).removeClass('download').addClass('downloading');
+          $(el).removeClass('downloadable-item');
+          $(el).find('i').first().addClass('is-invisible');
+          $(el).find('i').last().removeClass('is-invisible');
+          $(el).unbind('click');
+          $('#download-item-number').text('0');
+        });
         globalDownloadContainer = download_list;
         ipcRenderer.send('download-request',download_list);
       }
@@ -157,7 +153,7 @@ window.onload = () => {
     $('#container').append(panel);
   });
   
-  createSubsection = (parent,title,level,container,id,download_link,type) => {
+  createSubsection = (parent,title,level,container,id,item) => {
     $(parent).prev().find('i').first().css('visibility','visible');
     var subsection = document.createElement('div');
     $(subsection).addClass('panel-block sub-section');
@@ -170,8 +166,9 @@ window.onload = () => {
       $(checkbox).addClass('fa fa-square-o');
     if(!container) {
       $(subsection).addClass('downloadable-item');
-      $(subsection).attr('type',type);
-      $(subsection).attr('download-link',download_link);
+      $(subsection).attr('type',item.type);
+      $(subsection).attr('download-link',item.link);
+      $(subsection).attr('extension',item.ext);
       $(subsection).click(function() {
         var icon = $(this).find('i').first();
         if($(icon).hasClass('fa-square-o'))
@@ -208,12 +205,13 @@ window.onload = () => {
     title = document.createTextNode(title)
     $(checkbox_container).append(title);
     var icon = document.createElement('i');
-    $(icon).addClass('fa fa-plus-circle');
+    if(container) $(icon).addClass('fa fa-plus-circle');
+    else $(icon).addClass('fa fa-arrow-circle-down is-primary is-invisible');
     $(icon).css('float','right');
     $(icon).css('position','relative');
     $(icon).css('top','3px');
     $(subsection).append(checkbox_container);
-    if(container) $(subsection).append(icon);
+    $(subsection).append(icon);
     if(container) {
       var subsection_container = document.createElement('div');
       $(subsection_container).addClass('sub-section material-container');
@@ -252,19 +250,40 @@ window.onload = () => {
       var id = `documents-${arg.index}-container`;
       createSubsection(parent,'Documents',1,true,id);
       arg.content.document.forEach((item) => {
-        createSubsection($(`#${id}`),item.title,2,null,null,item.download_link,'doc');
+        var i = {
+          type:'doc',
+          link:item.download_link,
+          ext:item.extension
+        };
+        createSubsection($(`#${id}`),item.title,2,null,null,i);
       });
     }
     if(arg.content.video.length) {
       var id = `videos-${arg.index}-container`;
       createSubsection(parent,'Videos',1,true,id);
       arg.content.video.forEach((item) => {
-        createSubsection($(`#${id}`),item.title,2,null,null,item.download_link,'vid');
+        var i = {
+          type:'vid',
+          link:item.download_link,
+          ext:'ts'
+        };
+        createSubsection($(`#${id}`),item.title,2,null,null,i);
       });
     }
-    if(!arg.content.document.length && !arg.content.video.length) {
+    if(arg.content.error) {
       var no_material = document.createElement('div');
-      $(no_material).addClass('panel-block sub-section');
+      $(no_material).addClass('panel-block sub-section bg-danger-l fg-danger-l');
+      var msg = document.createElement('span');
+      $(msg).addClass('level-1');
+      $(msg).text(arg.content.error.message);
+      no_material.append(msg);
+      var no_material_helper = document.createElement('div');
+      $(no_material_helper).addClass('.material-container');
+      $(parent).append(no_material);
+      $(parent).append(no_material_helper);
+    } else if(!arg.content.document.length && !arg.content.video.length) {
+      var no_material = document.createElement('div');
+      $(no_material).addClass('panel-block sub-section bg-info-l fg-info-l');
       var msg = document.createElement('span');
       $(msg).addClass('level-1');
       $(msg).text('No content for this course.');
@@ -273,6 +292,6 @@ window.onload = () => {
       $(no_material_helper).addClass('.material-container');
       $(parent).append(no_material);
       $(parent).append(no_material_helper);
-    }
+    } else {}
   });
 }
