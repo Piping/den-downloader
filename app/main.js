@@ -19,13 +19,16 @@ ipcMain.on('login-submit', (event, arg) => {
   var file = path.join(__dirname,'src','external','main.js');
   const parameters =  [file,s_cred];
   const environment = process.env;
-  environment.PATH += ':/usr/local/bin/:/sbin:/usr/sbin';
+  environment.PATH += ':/usr/local/bin:/sbin:/usr/sbin';
   const child = child_process.spawn(command,parameters,{
     shell: false,
     env: environment,
     stdio: ['ignore','ignore','ignore','ipc']
   }).on('error', (error) => {
-    dialog.showErrorBox('Spawn Error',JSON.stringify(error));
+    var msg = `Couldn't create Node process.\n`;
+    msg += `Make sure Node is in Electron's process.env.PATH.`;
+    dialog.showErrorBox('Process Spawn Error',msg);
+    process.exit(1);
   });
   child.on('message', (message) => {
     message = JSON.parse(message);
@@ -65,13 +68,45 @@ ipcMain.on('content-request', (event,arg) => {
 });
 
 ipcMain.on('download-request', (event, arg) => {
-  proc.downloadContent(jar_c,jar_t,arg);
+  const jc = JSON.stringify(jar_c._jar.cookies);
+  const item = JSON.stringify(arg);
+  const command = 'node';
+  var file = path.join(__dirname,'src','external','downloadrequest.js');
+  const parameters =  [file,jc,item];
+  const environment = process.env;
+  environment.PATH += ':/usr/local/bin:/sbin:/usr/sbin';
+  const child = child_process.spawn(command,parameters,{
+    shell: false,
+    env: environment,
+    stdio: ['ignore','ignore','ignore','ipc']
+  }).on('error', (error) => {
+    var msg = `Couldn't create Node process.\n`;
+    msg += `Make sure Node is in Electron's process.env.PATH.`;
+    dialog.showErrorBox('Process Spawn Error',msg);
+    process.exit(1);
+  });
+  child.on('message', (message) => {
+    message = JSON.parse(message);
+    switch(message.result) {
+      case 'success':
+        event.sender.send('download-finished', message);
+        console.log(JSON.stringify(message)); break;
+      case 'failure':
+        event.sender.send('download-finished', message);
+        console.log(JSON.stringify(message)); break;
+      default:
+        console.log(JSON.stringify(message)); break;
+    }
+  });
 });
+
+
 
 function createWindow () {
   win = new BrowserWindow({
     width: 600,
     height: 400,
+    minWidth: 350,
     useContentSize: true,
     center: true,
     backgroundColor: '#fff',
