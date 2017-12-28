@@ -4,13 +4,12 @@ const request = require('request');
 const rp = require('request-promise');
 
 downloadVideo = (init_url,path) => {
-  if(!init_url) return;
   return new Promise((resolve, reject) => {
     try {
       var init_url_prefix = init_url.split('/playlist')[0];
       var file_name_parts = init_url.split('/')[6].split('_');
       var file_name = `${file_name_parts[0]}_${file_name_parts[1].slice(-8)}`;
-    } catch(error) { return }
+    } catch(error) {  reject('failure') }
     rp(init_url).then(async (body) => {
       return await rp(`${init_url_prefix}/${body.split('\n').splice(-2)[0]}`);
     }).then((data) => {
@@ -31,15 +30,15 @@ downloadVideo = (init_url,path) => {
           writeStream.write(data);
         }).on('end', () => {
           if(queued_processes <= num_total_segments) _d();
-          else resolve();
+          else resolve('success');
         }).on('error', (error) => {
           if(retry_counter++ < RETRIES) {
             queued_processes = 0;
             _d();
-          } else reject(error);
+          } else reject('failure');
         });
       })();
-    }).catch((error) => { reject(error) })
+    }).catch((error) => { reject('failure') })
   });
 }
 
