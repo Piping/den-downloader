@@ -3,7 +3,7 @@ const pad = require('pad-md');
 const request = require('request');
 const rp = require('request-promise');
 
-downloadVideo = (init_url,path) => {
+downloadVideo = (init_url,path,id) => {
   return new Promise((resolve, reject) => {
     try {
       var init_url_prefix = init_url.split('/playlist')[0];
@@ -26,10 +26,16 @@ downloadVideo = (init_url,path) => {
           uri: `${init_url_prefix}/${video_segment_prefix}${pad.left(queued_processes++,3,'0')}.ts`,
           encoding: null
         };
+        process.send(JSON.stringify({
+          progress:queued_processes,
+          total:num_total_segments,
+          id:id,
+          result:'progress'
+        }));
         request(options).on('data', (data) => {
           writeStream.write(data);
         }).on('end', () => {
-          if(queued_processes <= num_total_segments) _d();
+          if(queued_processes < num_total_segments) _d();
           else resolve('success');
         }).on('error', (error) => {
           if(retry_counter++ < RETRIES) {
