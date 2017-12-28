@@ -89,11 +89,11 @@ ipcMain.on('download-request', (event, arg) => {
     message = JSON.parse(message);
     switch(message.result) {
       case 'success':
-        event.sender.send('download-finished', message);
-        console.log(JSON.stringify(message)); break;
+        event.sender.send('download-finished', message); break;
       case 'failure':
-        event.sender.send('download-finished', message);
-        console.log(JSON.stringify(message)); break;
+        event.sender.send('download-finished', message); break;
+      case 'progress':
+        event.sender.send('download-progress', message); break;
       default:
         console.log(JSON.stringify(message)); break;
     }
