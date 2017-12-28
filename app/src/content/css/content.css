@@ -46,6 +46,9 @@ html, body {
 .fg-danger-l {
   color: #cd0930 !important; }
 
+.bg-white {
+  background-color: #fff !important; }
+
 .h-100 {
   height: 100% !important; }
 
@@ -112,11 +115,16 @@ html, body {
 
 .progressbarcustom {
   margin: auto !important;
-  background-color: #adfff3 !important; }
+  background-color: #adfff3; }
 
 .progressbarcustom {
   margin-top: 5px !important;
   margin-bottom: 5px !important; }
+
+.progress-container {
+  flex-grow: 1 !important;
+  margin: 0 0 0 2rem !important;
+  height: 16px !important; }
 
 .indeterminate {
   background-color: #00d1b2 !important; }

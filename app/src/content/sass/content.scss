@@ -31,6 +31,7 @@ html,body{height:100%!important}
 .bg-danger{background-color:$color-danger!important}
 .bg-danger-l{background-color:$color-danger-l!important}
 .fg-danger-l{color:$color-danger-l-f!important}
+.bg-white{background-color:#fff!important}
 .h-100{height:100%!important}
 .w-100{width:100%!important}
 .w-90{width:90%!important}
@@ -52,8 +53,9 @@ html,body{height:100%!important}
 .align-items-center{align-items:center!important}
 .align-items-start{align-items:start!important}
 .text-center{text-align:center!important}
-.progressbarcustom{margin:auto!important;background-color:$color-progress!important}
+.progressbarcustom{margin:auto!important;background-color:$color-progress}
 .progressbarcustom{margin-top:5px!important;margin-bottom:5px!important}
+.progress-container{flex-grow:1!important;margin:0 0 0 2rem!important;height:16px!important}
 .indeterminate{background-color:$color-primary!important}
 .message{max-width:250px!important;font-size:0.8rem!important}
 .message-header{button{margin-right:0.5rem!important}}

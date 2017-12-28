@@ -159,6 +159,11 @@ window.onload = () => {
     $(icon).css('position','relative');
     $(icon).css('top','3px');
     $(subsection).append(checkbox_container);
+    if(item && item.type === 'vid') {
+      var progress_container = document.createElement('div');
+      $(progress_container).addClass('progress-container');
+      $(subsection).append(progress_container);
+    }
     $(subsection).append(icon);
     if(container) {
       var subsection_container = document.createElement('div');
@@ -242,12 +247,22 @@ window.onload = () => {
     return $(wrapper);
   }
   
+  createProgressBar = () => {
+    var progress = document.createElement('div');
+    $(progress).addClass('progressbarcustom bg-dark');
+    var bar = document.createElement('div');
+    $(bar).addClass('determinate bg-white');
+    $(bar).css('width','0%');
+    $(progress).append(bar);
+    return progress;
+  }
+  
   setItemDownloaded = (item) => {
     $(item).removeClass('download downloading downloadable-item');
     $(item).addClass('downloaded');
     $(item).find('div').css('display','none');
     $(item).find('i').first().addClass('is-invisible');
-    $(item).find('i').last().removeClass('is-invisible');
+    $(item).find('i.fa-download').removeClass('is-invisible');
     updateDownloadCounter();
   }
   
@@ -255,7 +270,8 @@ window.onload = () => {
     $(item).removeClass('download downloadable-item download-failed');
     $(item).addClass('downloading');
     $(item).find('i').first().addClass('is-invisible');
-    $(item).append(createSpinner());
+    if($(item).attr('type') != 'vid') $(item).append(createSpinner());
+    else $(item).find('.progress-container').append(createProgressBar());
     updateDownloadCounter();
   }
   
@@ -330,12 +346,23 @@ window.onload = () => {
     updateDownloadCounter();
   }
   
+  updateProgressBar = (item,progress) => {
+    $(item).find('div.determinate').css('width',`${progress}%`);
+  }
+  
   ipcRenderer.on('download-finished', (event, arg) => {
     if(arg.result == 'success')
       setItemDownloaded($(`#${arg.id}`));
     else
       setItemFailed($(`#${arg.id}`));
   });
+  
+  ipcRenderer.on('download-progress', (event, arg) => {
+    arg.progress = parseInt(arg.progress);
+    arg.total = parseInt(arg.total);
+    var progress = Math.floor((arg.progress / arg.total) * 100);
+    updateProgressBar(`#${arg.id}`,progress);
+  })
   
   ipcRenderer.on('content-list', (event, arg) => {
     var parent = $(`#material-${arg.index}-container`);

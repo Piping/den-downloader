@@ -7,6 +7,13 @@
   border-radius: 2px;
   margin: 0;
   overflow: hidden; }
+  .progressbarcustom .determinate {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #00d1b2;
+    transition: width .3s linear; }
   .progressbarcustom .indeterminate {
     background-color: #00d1b2; }
     .progressbarcustom .indeterminate:before {
