@@ -121,9 +121,6 @@ html, body {
 .indeterminate {
   background-color: #00d1b2 !important; }
 
-.spinner-layer {
-  border-color: #00d1b2 !important; }
-
 .message {
   max-width: 250px !important;
   font-size: 0.8rem !important; }
@@ -152,7 +149,9 @@ html, body {
   margin-right: 0.3rem !important; }
 
 .panel-block label i {
-  margin-right: 0.4rem !important; }
+  margin-right: 0.4rem;
+  height: 11px !important;
+  width: 9px !important; }
 
 .sub-section {
   border-top: none !important; }
@@ -173,5 +172,31 @@ html, body {
   float: right;
   position: relative;
   top: -1px; }
+
+.download {
+  background-color: #ffdd57 !important;
+  color: rgba(0, 0, 0, 0.7) !important; }
+
+.downloading {
+  background-color: #209cee !important;
+  color: #fff !important; }
+
+.downloaded {
+  background-color: #00d1b2 !important;
+  color: #fff !important; }
+
+.download-failed {
+  background-color: #ff3860 !important;
+  color: #fff !important; }
+
+.tiny {
+  height: 16px !important;
+  width: 16px !important; }
+
+.spinner-primary {
+  border-color: #00d1b2 !important; }
+
+.spinner-white {
+  border-color: #fff !important; }
 
 /*# sourceMappingURL=content.css.map */

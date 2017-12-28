@@ -13,6 +13,7 @@ $color-dark-l-f:#2a2a2a;
 $color-danger:#ff3860;
 $color-danger-l:#fff5f7;
 $color-danger-l-f:#cd0930;
+$color-warning:hsl(48, 100%, 67%);
 $color-progress:#adfff3;
 html,body{height:100%!important}
 .bg-primary{background-color:$color-primary!important}
@@ -54,7 +55,6 @@ html,body{height:100%!important}
 .progressbarcustom{margin:auto!important;background-color:$color-progress!important}
 .progressbarcustom{margin-top:5px!important;margin-bottom:5px!important}
 .indeterminate{background-color:$color-primary!important}
-.spinner-layer{border-color:$color-primary!important}
 .message{max-width:250px!important;font-size:0.8rem!important}
 .message-header{button{margin-right:0.5rem!important}}
 .panel{margin:0.5rem!important;min-width:300px!important}
@@ -63,9 +63,16 @@ html,body{height:100%!important}
 .panel-block{font-size:0.7rem!important}
 .panel-block{i{margin-left:auto!important}}
 .panel-block{label{margin-right:0.3rem!important}}
-.panel-block{label{i{margin-right:0.4rem!important}}}
+.panel-block{label{i{margin-right:0.4rem;height:11px!important;width:9px!important}}}
 .sub-section{border-top:none!important}
 .material-container{display:none}
 .tag{font-size:0.6rem!important;cursor:pointer!important}
 .folder{float:right!important;margin-right:0.5rem!important}
 .tags{display:inline;float:right;position:relative;top:-1px}
+.download{background-color:$color-warning!important;color:rgba(0, 0, 0, 0.7)!important}
+.downloading{background-color:$color-info!important;color:#fff!important}
+.downloaded{background-color:$color-primary!important;color:#fff!important}
+.download-failed{background-color:$color-danger!important;color:#fff!important}
+.tiny{height:16px!important;width:16px!important}
+.spinner-primary{border-color:$color-primary!important}
+.spinner-white{border-color:#fff!important}
