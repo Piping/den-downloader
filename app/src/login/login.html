@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>USC DEN Downloader | Login</title>
+    <link rel='stylesheet' href='../../node_modules/bulma/css/bulma.css'>
+    <link rel='stylesheet' href='../../node_modules/font-awesome/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='css/login.css'>
+  </head>
+  <body class='is-unselectable'>
+    <div class='container d-flex justify-content-center align-items-center h-100'>
+      <div class='field'>
+        <label class='subtitle is-6'>Username:</label>
+        <div class='control has-icons-left has-icons-right'>
+          <input type='email' id='user' class='input' placeholder='Enter USC email'>
+          <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
+          <span class="icon is-small is-right"><i class="fa" id='user-i'></i></span>
+        </div>
+      </div>
+      <div class='field'>
+        <label class='subtitle is-6'>Password:</label>
+        <div class='control has-icons-left has-icons-right'>
+          <input type='password' id='pass' class='input' placeholder='Password'>
+          <span class="icon is-small is-left"><i class="fa fa-shield"></i></span>
+          <span class="icon is-small is-right"><i class="fa" id='pass-i'></i></span>
+        </div>
+      </div>
+      <div class='field'>
+        <div class='control'>
+          <button type='submit' class='button is-primary'>Submit</button>
+        </div>
+      </div>
+    </div>
+    <script src='js/login_renderer.js'></script>
+  </body>
+</html>

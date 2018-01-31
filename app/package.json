@@ -1,0 +1,27 @@
+{
+  "name": "den-downloader",
+  "productName": "DEN Downloader",
+  "version": "1.0.1",
+  "description": "Electron application to download USC DEN course material for later use.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Marton Demeter <marton1029@gmail.com>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "array-unique": "^0.3.2",
+    "bulma": "^0.6.1",
+    "cheerio": "^1.0.0-rc.2",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "moment": "^2.20.1",
+    "pad-md": "0.0.5",
+    "remove-value": "1.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "electron": "^1.7.10"
+  }
+}
