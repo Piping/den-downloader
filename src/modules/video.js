@@ -14,7 +14,7 @@ downloadVideo = (init_url,path,id) => {
       return await rp(`${init_url_prefix}/${body.split('\n').splice(-2)[0]}`);
     }).then((data) => {
       m3u8_contents = data.split('\n');
-      const RETRIES = 3;
+      const RETRIES = 25;
       var _d = Function();
       var num_total_segments = (m3u8_contents.length - 6) / 2;
       var queued_processes = 0;
@@ -39,7 +39,7 @@ downloadVideo = (init_url,path,id) => {
           else resolve('success');
         }).on('error', (error) => {
           if(retry_counter++ < RETRIES) {
-            queued_processes = 0;
+            queued_processes--;
             _d();
           } else reject('failure');
         });
