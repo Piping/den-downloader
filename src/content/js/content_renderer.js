@@ -38,11 +38,11 @@ window.onload = () => {
   
   setUpFilewatcher = () => {
     globalCourseArchive.forEach((course) => {
-      var d = require('path').join(globalOutputDirectory,course.id,'documents');
-      var v = require('path').join(globalOutputDirectory,course.id,'videos');
+      var d = require('path').join(globalOutputDirectory); //,course.id,'documents');
+      // var v = require('path').join(globalOutputDirectory); //,course.id,'videos');
       try {
         require('fs').watch(d,checkFiles);
-        require('fs').watch(v,checkFiles);
+        // require('fs').watch(v,checkFiles);
       } catch(error) {}
     });
   }
@@ -218,7 +218,7 @@ window.onload = () => {
   checkFileExists = (title,type,course,extension,element) => {
     var type = type == 'doc' ? 'documents' : 'videos';
     if(type=='videos') title = title.replace(/[\s/]/g,'');
-    var d = require('path').join(globalOutputDirectory,course,type);
+    var d = require('path').join(globalOutputDirectory); //,course,type);
     var f = require('path').join(d,`${title}.${extension}`);
     require('fs').access(f,(error) => {
       if(error) { clearItemDownloaded(element); return; }
