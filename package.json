@@ -9,7 +9,7 @@
     "package": "rm -rf ./dist && electron-packager ./ 'DEN Downloader' --platform=darwin --arch=x64 --out=./dist",
     "copy": "cp -r ./dist/DEN\\ Downloader-darwin-x64/DEN\\ Downloader.app /Applications/"
   },
-  "author": "Marton Demeter <marton1029@gmail.com>",
+  "author": "Marton Demeter <marton1029@gmail.com> (https://www.martondemeter.com)",
   "license": "GPL-3.0",
   "dependencies": {
     "array-unique": "^0.3.2",
