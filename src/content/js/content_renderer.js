@@ -271,7 +271,10 @@ window.onload = () => {
     $(item).addClass('downloading');
     $(item).find('i').first().addClass('is-invisible');
     if($(item).attr('type') != 'vid') $(item).append(createSpinner());
-    else $(item).find('.progress-container').append(createProgressBar());
+    else {
+      $(item).find('.progress-container').append(createProgressBar());
+      $(item).find('.progress-container').css('display','block');
+    }
     updateDownloadCounter();
   }
   
