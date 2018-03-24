@@ -2,6 +2,7 @@ const fs = require('fs');
 const pad = require('pad-md');
 const request = require('request');
 const rp = require('request-promise');
+const { ipcRenderer } = require('electron');
 
 downloadVideo = (init_url,path,id) => {
   return new Promise((resolve, reject) => {
@@ -26,12 +27,12 @@ downloadVideo = (init_url,path,id) => {
           uri: `${init_url_prefix}/${video_segment_prefix}${pad.left(queued_processes++,3,'0')}.ts`,
           encoding: null
         };
-        process.send(JSON.stringify({
+        ipcRenderer.send('download-progress', {
           progress:queued_processes,
           total:num_total_segments,
           id:id,
           result:'progress'
-        }));
+        });
         request(options).on('data', (data) => {
           writeStream.write(data);
         }).on('end', () => {

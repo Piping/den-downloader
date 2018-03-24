@@ -2,6 +2,7 @@ window.$ = window.jQuery = require('jquery');
 const ipcRenderer = require('electron').ipcRenderer;
 
 window.onload = () => {
+  ipcRenderer.send('content-window-ready');
   ipcRenderer.on('login-failure', (event, arg) => {
     var header = 'Failed to Authenticate!';
     var content = 'Could not authenticate.\n';

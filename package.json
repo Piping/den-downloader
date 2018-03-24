@@ -1,29 +1,48 @@
 {
   "name": "den-downloader",
-  "productName": "DEN Downloader",
-  "version": "1.0.1",
+  "version": "1.1.0",
+  "main": "index.js",
   "description": "Electron application to download USC DEN course material for later use.",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "package": "rm -rf ./dist && electron-packager ./ 'DEN Downloader' --platform=darwin --arch=x64 --out=./dist",
-    "copy": "cp -r ./dist/DEN\\ Downloader-darwin-x64/DEN\\ Downloader.app /Applications/"
-  },
+  "repository": "https://www.github.com/marton-demeter/den-downloader",
   "author": "Marton Demeter <marton1029@gmail.com> (https://www.martondemeter.com)",
   "license": "GPL-3.0",
+  "scripts": {
+    "start": "electron .",
+    "pack": "yarn electron-builder --dir",
+    "dist": "yarn dist:mac && yarn dist:win32",
+    "dist:mac": "yarn electron-builder --mac",
+    "dist:win32": "yarn electron-builder --win --ia32 --x64",
+    "postinstall": "yarn electron-builder install-app-deps"
+  },
   "dependencies": {
     "array-unique": "^0.3.2",
-    "bulma": "^0.6.1",
+    "bulma": "^0.6.2",
     "cheerio": "^1.0.0-rc.2",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.2.1",
-    "moment": "^2.20.1",
-    "pad-md": "0.0.5",
-    "remove-value": "1.0.0",
-    "request": "^2.83.0",
+    "jquery": "^3.3.1",
+    "moment": "^2.21.0",
+    "pad-md": "^0.0.5",
+    "remove-value": "^1.0.0",
+    "request": "^2.85.0",
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
-    "electron": "^1.7.10"
+    "electron": "^1.8.4",
+    "electron-builder": "^20.6.2"
+  },
+  "build": {
+    "productName": "Den Downloader",
+    "compression": "maximum",
+    "buildVersion": "1.1.0",
+    "directories": {
+      "app": "./",
+      "output": "./dist"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    }
   }
 }
